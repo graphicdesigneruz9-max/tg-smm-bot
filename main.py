@@ -1,11 +1,18 @@
+import os
 import telebot
 import requests
+from flask import Flask, request
 
 BOT_TOKEN = "8856669884:AAHOyZs7AOySBE1myPPDaiiCVnxVnRo6Um8"
 DIFY_API_KEY = "app-BSbTevNCtZkKQhdEqtMO0emQ"
 DIFY_API_URL = "https://dify.ai"
 
-bot = telebot.TeleBot(BOT_TOKEN)
+bot = telebot.TeleBot(BOT_TOKEN, threaded=False)
+app = Flask(__name__)
+
+@app.route('/', methods=['GET'])
+def index():
+    return "Bot is live and running!"
 
 @bot.message_handler(func=lambda message: True)
 def handle_message(message):
@@ -31,6 +38,9 @@ def handle_message(message):
     except Exception as e:
         bot.edit_message_text(f"❌ Xatolik yuz berdi: {str(e)}", message.chat.id, status_msg.message_id)
 
-# Render'da to'qnashuv bo'lmasligi uchun polling'ni faqat bir marta ishga tushiramiz
 if __name__ == "__main__":
-    bot.infinity_polling(skip_pending=True)
+    import threading
+    # Telegram parallel ulanishlarni taqiqlamasligi uchun polling bitta oqimda ishlaydi
+    threading.Thread(target=bot.infinity_polling, kwargs={"skip_pending": True}, daemon=True).start()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
