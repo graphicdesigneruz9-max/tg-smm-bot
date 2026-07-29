@@ -31,4 +31,17 @@ def handle_message(message):
     except Exception as e:
         bot.edit_message_text(f"❌ Xatolik yuz berdi: {str(e)}", message.chat.id, status_msg.message_id)
 
-bot.infinity_polling()
+import os
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return "Bot is running!"
+
+if __name__ == "__main__":
+    import threading
+    threading.Thread(target=bot.infinity_polling, daemon=True).start()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
+
