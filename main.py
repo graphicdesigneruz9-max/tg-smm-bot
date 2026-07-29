@@ -1,7 +1,7 @@
 import telebot
 import requests
 
-BOT_TOKEN = "8838771502:AAGMRA96BES5cunz7am5w9wUCNP3Ids03Ag"
+BOT_TOKEN = "8856669884:AAHOyZs7AOySBE1myPPDaiiCVnxVnRo6Um8"
 DIFY_API_KEY = "app-BSbTevNCtZkKQhdEqtMO0emQ"
 DIFY_API_URL = "https://dify.ai"
 
