@@ -11,9 +11,9 @@ bot = telebot.TeleBot(BOT_TOKEN)
 def handle_message(message):
     tz_text = message.text
     status_msg = bot.reply_to(message, "⏳ TZ qabul qilindi. SMM post va rasm tayyorlanmoqda, iltimos kuting...")
-
+    
     headers = {
-        "Authorization": f"Bearer {DIFY_API_KEY}",
+        "Authorization": f"Bearer {DIFY_API_KEY}", 
         "Content-Type": "application/json"
     }
     data = {
@@ -22,7 +22,7 @@ def handle_message(message):
         "response_mode": "blocking",
         "user": str(message.from_user.id)
     }
-
+    
     try:
         response = requests.post(DIFY_API_URL, json=data, headers=headers).json()
         tayyor_javob = response.get('answer', 'Xatolik: Dify-dan bo\'sh javob qaytdi.')
@@ -31,17 +31,6 @@ def handle_message(message):
     except Exception as e:
         bot.edit_message_text(f"❌ Xatolik yuz berdi: {str(e)}", message.chat.id, status_msg.message_id)
 
-import os
-from flask import Flask
-app = Flask(__name__)
-
-@app.route('/')
-def index():
-    return "Bot is running!"
-
+# Render'da to'qnashuv bo'lmasligi uchun polling'ni faqat bir marta ishga tushiramiz
 if __name__ == "__main__":
-    import threading
-    threading.Thread(target=bot.infinity_polling, daemon=True).start()
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
-
+    bot.infinity_polling(skip_pending=True)
