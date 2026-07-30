@@ -3,8 +3,8 @@ import telebot
 import requests
 from flask import Flask, request
 
-BOT_TOKEN = "YANGI_OCHGAN_BOT_TOKENINGIZNI_YOZING"
-DIFY_API_KEY = "DIFY_API_KEYINGIZNI_YOZING"
+BOT_TOKEN = "8856669884:AAHOyZs7AOySBE1myPPDaiiCVnxVnRo6Um8"
+DIFY_API_KEY = "app-RkqVjCJsB7Xhg6uHVREp91JQ"
 DIFY_API_URL = "https://dify.ai"
 RENDER_URL = "https://smm-bot-free.onrender.com"
 
