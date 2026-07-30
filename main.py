@@ -3,21 +3,18 @@ import telebot
 import requests
 from flask import Flask, request
 
-BOT_TOKEN = "8856669884:AAHOyZs7AOySBE1myPPDaiiCVnxVnRo6Um8"
-DIFY_API_KEY = "app-RkqVjCJsB7Xhg6uHVREp91JQ"
+BOT_TOKEN = "YANGI_OCHGAN_BOT_TOKENINGIZNI_YOZING"
+DIFY_API_KEY = "DIFY_API_KEYINGIZNI_YOZING"
 DIFY_API_URL = "https://dify.ai"
-
-# Render'da sizga berilgan asosiy havola (Oxirida slash '/' belgisiz yozing)
-RENDER_URL = "https://onrender.com" 
+RENDER_URL = "https://smm-bot-free.onrender.com"
 
 bot = telebot.TeleBot(BOT_TOKEN, threaded=False)
 app = Flask(__name__)
 
 @app.route('/', methods=['GET'])
 def index():
-    return "Bot is live and running!"
+    return "Bot is live!"
 
-# Telegram xabarlarini qabul qiluvchi maxsus manzil
 @app.route('/' + BOT_TOKEN, methods=['POST'])
 def getMessage():
     json_string = request.get_data().decode('utf-8')
@@ -42,17 +39,24 @@ def handle_message(message):
     }
     
     try:
-        response = requests.post(DIFY_API_URL, json=data, headers=headers).json()
-        tayyor_javob = response.get('answer', 'Xatolik: Dify-dan bo\'sh javob qaytdi.')
+        response = requests.post(DIFY_API_URL, json=data, headers=headers)
+        res_json = response.json()
+        
+        # Dify Chatflow va Workflow uchun javobni to'g'ri ajratib olish
+        tayyor_javob = res_json.get('answer', '')
+        if not tayyor_javob and 'data' in res_json:
+            tayyor_javob = res_json['data'].get('outputs', {}).get('text', '')
+            
+        if not tayyor_javob:
+            tayyor_javob = "Dify tizimidan matn qabul qilinmadi. Bloklarni tekshiring."
+
         bot.send_message(message.chat.id, tayyor_javob)
         bot.delete_message(message.chat.id, status_msg.message_id)
     except Exception as e:
-        bot.edit_message_text(f"❌ Xatolik yuz berdi: {str(e)}", message.chat.id, status_msg.message_id)
+        bot.edit_message_text(f"❌ Xatolik: {str(e)}", message.chat.id, status_msg.message_id)
 
 if __name__ == "__main__":
-    # Telegram serverlariga webhook ulanishini o'rnatish
     bot.remove_webhook()
     bot.set_webhook(url=f"{RENDER_URL}/{BOT_TOKEN}")
-    
     port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
