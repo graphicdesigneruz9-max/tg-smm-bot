@@ -3,10 +3,13 @@ import telebot
 import requests
 from flask import Flask, request
 
+# KALITLARNI SHU YERGA YOZING
 BOT_TOKEN = "8856669884:AAHOyZs7AOySBE1myPPDaiiCVnxVnRo6Um8"
 DIFY_API_KEY = "app-RkqVjCJsB7Xhg6uHVREp91JQ"
+
+# Yevropa serveri uchun aniq API manzili
 DIFY_API_URL = "https://dify.ai"
-RENDER_URL = "https://smm-bot-free.onrender.com"
+RENDER_URL = "https://onrender.com"
 
 bot = telebot.TeleBot(BOT_TOKEN, threaded=False)
 app = Flask(__name__)
@@ -42,7 +45,6 @@ def handle_message(message):
         response = requests.post(DIFY_API_URL, json=data, headers=headers)
         res_json = response.json()
         
-        # Dify Chatflow va Workflow uchun javobni to'g'ri ajratib olish
         tayyor_javob = res_json.get('answer', '')
         if not tayyor_javob and 'data' in res_json:
             tayyor_javob = res_json['data'].get('outputs', {}).get('text', '')
